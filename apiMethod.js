@@ -10,7 +10,7 @@ const kategoriList = app.get("/kategoriList", async (req, res) => {
     const spKategoriListRes = await spFunction.spKategoriList();
     res.send(spKategoriListRes.recordset);
   } catch (error) {
-    res.send(error);
+    res.send(error.message);
   }
 });
 
@@ -21,12 +21,8 @@ const kategoriEkle = app.post(
     const { KategoriAdi } = req.body;
 
     try {
-      const spKategoriEkleRes = await spFunction.spKategoriEkle(
-        "Ad",
-        sql.VarChar(100),
-        KategoriAdi
-      );
-      res.send("Kategori Eklendi");
+      const spKategoriEkleRes = await spFunction.spKategoriEkle(KategoriAdi);
+      res.send({ responseCode: 100, message: "Kategori Eklendi" });
     } catch (err) {
       res.send(err.message);
     }
@@ -42,19 +38,15 @@ const kategoriGuncelle = app.put(
 
     try {
       const spKategoriGuncelleRes = await spFunction.spKategoriGuncelle(
-        "ID",
-        "Ad",
-        sql.Int,
-        sql.VarChar(100),
         KategoriId,
         KategoriAdi
         // "ID", sql.Int, KategoriId,
         // "Ad", sql.VarChar(100), KategoriAdi
       );
 
-      res.send("Kategori Güncellendi");
+      res.send({ responseCode: 100, message: "Kategori Güncellendi" });
     } catch (error) {
-      res.send(error);
+      res.send(error.message);
     }
   }
 );
@@ -66,14 +58,10 @@ const kategoriSil = app.delete(
     const { KategoriId } = req.body;
 
     try {
-      const spKategoriSilRes = await spFunction.spKategoriSil(
-        "ID",
-        sql.Int,
-        KategoriId
-      );
-      res.send("Kategori Silindi");
+      const spKategoriSilRes = await spFunction.spKategoriSil(KategoriId);
+      res.send({ responseCode: 100, message: "Kategori Silindi" });
     } catch (error) {
-      res.send(error);
+      res.send(error.message);
     }
   }
 );
@@ -83,10 +71,10 @@ const kategoriSil = app.delete(
 //#region ÜRÜN
 const urunList = app.get("/urunList", async (req, res) => {
   try {
-    const spKUrunListRes = await spFunction.spUrunList();
-    res.send(spKUrunListRes.recordset);
+    const spUrunListRes = await spFunction.spUrunList();
+    res.send(spUrunListRes.recordset);
   } catch (error) {
-    res.send(error);
+    res.send(error.message);
   }
 });
 
@@ -105,20 +93,6 @@ const urunEkle = app.post(
     } = req.body;
     try {
       const spUrunEkleRes = await spFunction.spUrunEkle(
-        "Ad",
-        "Aciklama",
-        "ResimUrl",
-        "Fiyat",
-        "StokAdedi",
-        "KategoriID",
-        "UrunDurumuID",
-        sql.VarChar(100),
-        sql.VarChar(250),
-        sql.VarChar(200),
-        sql.Money,
-        sql.Int,
-        sql.Int,
-        sql.Int,
         UrunAdi,
         UrunAciklama,
         UrunResimUrl,
@@ -127,9 +101,9 @@ const urunEkle = app.post(
         UrunKategoriID,
         UrunDurumuID
       );
-      res.send("Ürün Eklendi.");
+      res.send({ responseCode: 100, message: "Ürün Eklendi" });
     } catch (error) {
-      res.send(error);
+      res.send(error.message);
     }
   }
 );
@@ -151,22 +125,6 @@ const urunGuncelle = app.put(
 
     try {
       const spUrunGuncelleRes = await spFunction.spUrunGuncelle(
-        "ID",
-        "Ad",
-        "Aciklama",
-        "ResimUrl",
-        "Fiyat",
-        "StokAdedi",
-        "KategoriID",
-        "UrunDurumuID",
-        sql.Int,
-        sql.VarChar(100),
-        sql.VarChar(250),
-        sql.VarChar(200),
-        sql.Money,
-        sql.Int,
-        sql.Int,
-        sql.Int,
         UrunID,
         UrunAdi,
         UrunAciklama,
@@ -177,9 +135,9 @@ const urunGuncelle = app.put(
         UrunDurumuID
       );
 
-      res.send("Ürün Güncellendi");
+      res.send({ responseCode: 100, message: "Ürün Güncellendi" });
     } catch (error) {
-      res.send(error);
+      res.send(error.message);
     }
   }
 );
@@ -188,21 +146,105 @@ const urunSil = app.delete(
   "/urunSil",
   middleware.bosAlanUrun,
   async (req, res) => {
-    const { UrunId } = req.body;
+    const { UrunID } = req.body;
 
     try {
-      const spKategoriSilRes = await spFunction.spUrunSil(
-        "ID",
-        sql.Int,
-        UrunId
-      );
-      res.send("Ürün Silindi");
+      const spUrunSilRes = await spFunction.spUrunSil(UrunID);
+      res.send({ responseCode: 100, message: "Ürün Silindi" });
     } catch (error) {
-      res.send(error);
+      res.send(error.message);
     }
   }
 );
 
+//#endregion
+
+//#region SİPARİS
+
+const siparisList = app.get("/siparisList", async (req, res) => {
+  try {
+    const spSiparisListRes = await spFunction.spsiparisList();
+    res.send(spSiparisListRes.recordset);
+  } catch (error) {
+    res.send(error.message);
+  }
+});
+
+const siparisEkle = app.post("/siparisEkle", middleware.bosAlanSiparis, async (req, res) => {
+  const {
+    SiparisTarihi,
+    TeslimTarihi,
+    SiparisDurumID,
+    MusteriNotu,
+    FirmaNotu,
+    IlID,
+    AcikAdres,
+    Telefon,
+    Ad,
+    Soyad,
+    ToplamFiyat,
+  } = req.body;
+  try {
+    const spSiparisEkleRes = await spFunction.spSiparisEkle(
+      SiparisTarihi,
+      TeslimTarihi,
+      SiparisDurumID,
+      MusteriNotu,
+      FirmaNotu,
+      IlID,
+      AcikAdres,
+      Telefon,
+      Ad,
+      Soyad,
+      ToplamFiyat
+    );
+    res.send({ responseCode: 100, message: "Siparis Eklendi" });
+  } catch (error) {
+    res.send(error.message);
+  }
+});
+
+const siparisGuncelle = app.put(
+  "/siparisGuncelle",
+  middleware.bosAlanSiparis,
+  async (req, res) => {
+    const {
+      SiparisId,
+      SiparisTarihi,
+      TeslimTarihi,
+      SiparisDurumID,
+      MusteriNotu,
+      FirmaNotu,
+      IlID,
+      AcikAdres,
+      Telefon,
+      Ad,
+      Soyad,
+      ToplamFiyat,
+    } = req.body;
+
+    try {
+      const spUrunGuncelleRes = await spFunction.spSiparisGuncelle(
+        SiparisId,
+        SiparisTarihi,
+        TeslimTarihi,
+        SiparisDurumID,
+        MusteriNotu,
+        FirmaNotu,
+        IlID,
+        AcikAdres,
+        Telefon,
+        Ad,
+        Soyad,
+        ToplamFiyat,
+      );
+
+      res.send({ responseCode: 100, message: "Siparis Güncellendi" });
+    } catch (error) {
+      res.send(error.message);
+    }
+  }
+);
 //#endregion
 
 module.exports = app;

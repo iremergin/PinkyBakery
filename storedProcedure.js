@@ -1,34 +1,28 @@
+const sql = require("mssql");
 //#region KATEGORİ
 const spKategoriList = async () => {
   return await sqlConRes.request().execute("usp_KategoriList");
 };
 
-const spKategoriEkle = async (spInput, spDataType, KategoriAdi) => {
+const spKategoriEkle = async (kategoriAdi) => {
   return await sqlConRes
     .request()
-    .input(spInput, spDataType, KategoriAdi)
+    .input("Ad", sql.VarChar(100), kategoriAdi)
     .execute("usp_KategoriEkle");
 };
 
-const spKategoriGuncelle = async (
-  spInput,
-  spInput2,
-  spDataType,
-  spDataType2,
-  KategoriId,
-  KategoriAdi
-) => {
+const spKategoriGuncelle = async (kategoriId, kategoriAdi) => {
   return await sqlConRes
     .request()
-    .input(spInput, spDataType, KategoriId)
-    .input(spInput2, spDataType2, KategoriAdi)
+    .input("ID", sql.Int, kategoriId)
+    .input("Ad", sql.VarChar(100), kategoriAdi)
     .execute("usp_KategoriGuncelle");
 };
 
-const spKategoriSil = async (spInput, spDataType, KategoriId) => {
+const spKategoriSil = async (kategoriId) => {
   return await sqlConRes
     .request()
-    .input(spInput, spDataType, KategoriId)
+    .input("ID", sql.Int, kategoriId)
     .execute("usp_KategoriSil");
 };
 
@@ -40,20 +34,6 @@ const spUrunList = async () => {
 };
 
 const spUrunEkle = async (
-  ad,
-  aciklama,
-  resimUrl,
-  fiyat,
-  stokAdedi,
-  kategoriId,
-  urunDurumuId,
-  adDataType,
-  aciklamaDataType,
-  resimUrlDataType,
-  fiyatDataType,
-  stokAdediDataType,
-  kategoriIdDataType,
-  urunDurumuIdDataType,
   urunAdi,
   urunAciklama,
   urunResimUrl,
@@ -64,33 +44,17 @@ const spUrunEkle = async (
 ) => {
   return await sqlConRes
     .request()
-    .input(ad, adDataType, urunAdi)
-    .input(aciklama, aciklamaDataType, urunAciklama)
-    .input(resimUrl, resimUrlDataType, urunResimUrl)
-    .input(fiyat, fiyatDataType, urunFiyat)
-    .input(stokAdedi, stokAdediDataType, urunStokAdedi)
-    .input(kategoriId, kategoriIdDataType, urunKategoriID)
-    .input(urunDurumuId, urunDurumuIdDataType, urunDurumuID)
+    .input("Ad", sql.VarChar(100), urunAdi)
+    .input("Aciklama", sql.VarChar(250), urunAciklama)
+    .input("ResimUrl", sql.VarChar(200), urunResimUrl)
+    .input("Fiyat", sql.Money, urunFiyat)
+    .input("StokAdedi", sql.Int, urunStokAdedi)
+    .input("KategoriID", sql.Int, urunKategoriID)
+    .input("UrunDurumuID", sql.Int, urunDurumuID)
     .execute("usp_UrunEkle");
 };
 
 const spUrunGuncelle = async (
-  id,
-  ad,
-  aciklama,
-  resimUrl,
-  fiyat,
-  stokAdedi,
-  kategoriId,
-  urunDurumuId,
-  idDataType,
-  adDataType,
-  aciklamaDataType,
-  resimUrlDataType,
-  fiyatDataType,
-  stokAdediDataType,
-  kategoriIdDataType,
-  urunDurumuIdDataType,
   urunId,
   urunAdi,
   urunAciklama,
@@ -102,24 +66,90 @@ const spUrunGuncelle = async (
 ) => {
   return await sqlConRes
     .request()
-    .input(id, idDataType, urunId)
-    .input(ad, adDataType, urunAdi)
-    .input(aciklama, aciklamaDataType, urunAciklama)
-    .input(resimUrl, resimUrlDataType, urunResimUrl)
-    .input(fiyat, fiyatDataType, urunFiyat)
-    .input(stokAdedi, stokAdediDataType, urunStokAdedi)
-    .input(kategoriId, kategoriIdDataType, urunKategoriID)
-    .input(urunDurumuId, urunDurumuIdDataType, urunDurumuID)
+    .input("ID", sql.Int, urunId)
+    .input("Ad", sql.VarChar(100), urunAdi)
+    .input("Aciklama", sql.VarChar(250), urunAciklama)
+    .input("ResimUrl", sql.VarChar(200), urunResimUrl)
+    .input("Fiyat", sql.Money, urunFiyat)
+    .input("StokAdedi", sql.Int, urunStokAdedi)
+    .input("KategoriID", sql.Int, urunKategoriID)
+    .input("UrunDurumuID", sql.Int, urunDurumuID)
     .execute("usp_UrunGuncelle");
 };
 
-const spUrunSil = async (spInput, spDataType, UrunId) => {
+const spUrunSil = async (urunId) => {
   return await sqlConRes
     .request()
-    .input(spInput, spDataType, UrunId)
+    .input("ID", sql.Int, urunId)
     .execute("usp_UrunSil");
 };
 
+//#endregion
+
+//#region SİPARİS
+const spsiparisList = async () => {
+  return await sqlConRes.request().execute("usp_SiparisList");
+};
+
+const spSiparisEkle = async (
+  siparisTarihi,
+  teslimTarihi,
+  siparisDurumID,
+  musteriNotu,
+  firmaNotu,
+  ilID,
+  acikAdres,
+  telefon,
+  ad,
+  soyad,
+  toplamFiyat
+) => {
+  return await sqlConRes
+    .request()
+    .input("SiparisTarihi", sql.DateTime, siparisTarihi)
+    .input("TeslimTarihi", sql.DateTime, teslimTarihi)
+    .input("SiparisDurumID", sql.Int, siparisDurumID)
+    .input("MusteriNotu", sql.VarChar(300), musteriNotu)
+    .input("FirmaNotu", sql.VarChar(300), firmaNotu)
+    .input("IlID", sql.Int, ilID)
+    .input("AcikAdres", sql.VarChar(300), acikAdres)
+    .input("Telefon", sql.VarChar(20), telefon)
+    .input("Ad", sql.VarChar(100), ad)
+    .input("Soyad", sql.VarChar(100), soyad)
+    .input("ToplamFiyat", sql.Money, toplamFiyat)
+    .execute("usp_SiparisEkle");
+};
+
+const spSiparisGuncelle = async (
+  id,
+  siparisTarihi,
+  teslimTarihi,
+  siparisDurumID,
+  musteriNotu,
+  firmaNotu,
+  ilID,
+  acikAdres,
+  telefon,
+  ad,
+  soyad,
+  toplamFiyat
+) => {
+  return await sqlConRes
+    .request()
+    .input("ID", sql.Int, id)
+    .input("SiparisTarihi", sql.DateTime, siparisTarihi)
+    .input("TeslimTarihi", sql.DateTime, teslimTarihi)
+    .input("SiparisDurumID", sql.Int, siparisDurumID)
+    .input("MusteriNotu", sql.VarChar(300), musteriNotu)
+    .input("FirmaNotu", sql.VarChar(300), firmaNotu)
+    .input("IlID", sql.Int, ilID)
+    .input("AcikAdres", sql.VarChar(300), acikAdres)
+    .input("Telefon", sql.VarChar(20), telefon)
+    .input("Ad", sql.VarChar(100), ad)
+    .input("Soyad", sql.VarChar(100), soyad)
+    .input("ToplamFiyat", sql.Money, toplamFiyat)
+    .execute("usp_SiparisGuncelle");
+};
 //#endregion
 
 module.exports = {
@@ -130,5 +160,8 @@ module.exports = {
   spKategoriSil,
   spUrunEkle,
   spUrunGuncelle,
-  spUrunSil
+  spUrunSil,
+  spsiparisList,
+  spSiparisEkle,
+  spSiparisGuncelle
 };
