@@ -8,7 +8,6 @@ const bosAlanKategoriID = (req, res, next) => {
   return res.send("Boş değer olamaz");
 };
 
-
 const bosAlanKategoriAd = (req, res, next) => {
   const { KategoriAdi } = req.body;
 
@@ -21,7 +20,7 @@ const bosAlanKategoriAd = (req, res, next) => {
 
 const bosAlanUrun = (req, res, next) => {
   const {
-    UrunID,
+    UrunId,
     UrunAdi,
     UrunAciklama,
     UrunResimUrl,
@@ -32,13 +31,13 @@ const bosAlanUrun = (req, res, next) => {
   } = req.body;
 
   if (
-    UrunID &&
-    UrunAdi &&
-    UrunAciklama &&
-    UrunResimUrl &&
-    UrunFiyat &&
-    UrunStokAdedi &&
-    UrunKategoriID &&
+    UrunId ||
+    UrunAdi ||
+    UrunAciklama ||
+    UrunResimUrl ||
+    UrunFiyat ||
+    UrunStokAdedi ||
+    UrunKategoriID ||
     UrunDurumuID
   ) {
     return next();
@@ -46,4 +45,4 @@ const bosAlanUrun = (req, res, next) => {
   return res.send("Boş değer olamaz.");
 };
 
-module.exports = { bosAlanKategoriID, bosAlanKategoriAd };
+module.exports = { bosAlanKategoriID, bosAlanKategoriAd, bosAlanUrun };

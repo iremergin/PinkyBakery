@@ -92,7 +92,7 @@ const urunList = app.get("/urunList", async (req, res) => {
 
 const urunEkle = app.post(
   "/urunEkle",
-  // middleware.bosAlanUrun,
+  middleware.bosAlanUrun,
   async (req, res) => {
     const {
       UrunAdi,
@@ -136,7 +136,7 @@ const urunEkle = app.post(
 
 const urunGuncelle = app.put(
   "/urunGuncelle",
-  //middleware.bosAlanUrun,
+  middleware.bosAlanUrun,
   async (req, res) => {
     const {
       UrunID,
@@ -186,7 +186,7 @@ const urunGuncelle = app.put(
 
 const urunSil = app.delete(
   "/urunSil",
-  //middleware.bosAlanUrun,
+  middleware.bosAlanUrun,
   async (req, res) => {
     const { UrunId } = req.body;
 
