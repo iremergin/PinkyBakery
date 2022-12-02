@@ -12,10 +12,12 @@ const config = {
   password: "Arita2021!",
   server: "188.138.41.86",
   database: "PinkyBakery",
-  Encrypt: true,
-  trustServerCertificate: true,
+  options: {
+    encrypt: false,
+    trustServerCertificate: true,
+    enableArithAbort: true,
+  },
 };
-
 app.use(router);
 
 const server = app.listen(3500, async function () {
