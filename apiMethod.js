@@ -19,10 +19,20 @@ const kategoriEkle = app.post(
   middleware.bosAlanKategoriAd,
   async (req, res) => {
     const { KategoriAdi } = req.body;
-
     try {
       const spKategoriEkleRes = await spFunction.spKategoriEkle(KategoriAdi);
-      res.send({ responseCode: 100, message: "Kategori Eklendi" });
+
+      if (
+        spKategoriEkleRes &&
+        spKategoriEkleRes.recordset &&
+        spKategoriEkleRes.recordset.length > 0
+      ) {
+        if (spKategoriEkleRes.recordset[0].ResponseCode === 100) {
+          res.send({ responseCode: 100, message: "Kategori Eklendi" });
+        } else {
+          res.send({ responseCode: -300, message: "Hata" });
+        }
+      }
     } catch (err) {
       res.send(err.message);
     }
@@ -40,11 +50,19 @@ const kategoriGuncelle = app.put(
       const spKategoriGuncelleRes = await spFunction.spKategoriGuncelle(
         KategoriId,
         KategoriAdi
-        // "ID", sql.Int, KategoriId,
-        // "Ad", sql.VarChar(100), KategoriAdi
       );
 
-      res.send({ responseCode: 100, message: "Kategori Güncellendi" });
+      if (
+        spKategoriGuncelleRes &&
+        spKategoriGuncelleRes.recordset &&
+        spKategoriGuncelleRes.recordset.length > 0
+      ) {
+        if (spKategoriGuncelleRes.recordset[0].ResponseCode === 100) {
+          res.send({ responseCode: 100, message: "Kategori Güncellendi" });
+        } else {
+          res.send({ responseCode: -300, message: "Bu kategori bulunamadı!" });
+        }
+      }
     } catch (error) {
       res.send(error.message);
     }
@@ -59,7 +77,17 @@ const kategoriSil = app.delete(
 
     try {
       const spKategoriSilRes = await spFunction.spKategoriSil(KategoriId);
-      res.send({ responseCode: 100, message: "Kategori Silindi" });
+      if (
+        spKategoriSilRes &&
+        spKategoriSilRes.recordset &&
+        spKategoriSilRes.recordset.length > 0
+      ) {
+        if (spKategoriSilRes.recordset[0].ResponseCode === 100) {
+          res.send({ responseCode: 100, message: "Kategori Silindi" });
+        } else {
+          res.send({ responseCode: -300, message: "Bu kategori bulunamadı!" });
+        }
+      }
     } catch (error) {
       res.send(error.message);
     }
@@ -101,7 +129,17 @@ const urunEkle = app.post(
         UrunKategoriID,
         UrunDurumuID
       );
-      res.send({ responseCode: 100, message: "Ürün Eklendi" });
+      if (
+        spUrunEkleRes &&
+        spUrunEkleRes.recordset &&
+        spUrunEkleRes.recordset.length > 0
+      ) {
+        if (spUrunEkleRes.recordset[0].ResponseCode === 100) {
+          res.send({ responseCode: 100, message: "Ürün Eklendi" });
+        } else {
+          res.send({ responseCode: -300, message: "Hata" });
+        }
+      }
     } catch (error) {
       res.send(error.message);
     }
@@ -134,8 +172,17 @@ const urunGuncelle = app.put(
         UrunKategoriID,
         UrunDurumuID
       );
-
-      res.send({ responseCode: 100, message: "Ürün Güncellendi" });
+      if (
+        spUrunGuncelleRes &&
+        spUrunGuncelleRes.recordset &&
+        spUrunGuncelleRes.recordset.length > 0
+      ) {
+        if (spUrunGuncelleRes.recordset[0].ResponseCode === 100) {
+          res.send({ responseCode: 100, message: "Ürün Güncellendi" });
+        } else {
+          res.send({ responseCode: -300, message: "Hata" });
+        }
+      }
     } catch (error) {
       res.send(error.message);
     }
@@ -144,13 +191,23 @@ const urunGuncelle = app.put(
 
 const urunSil = app.delete(
   "/urunSil",
-  middleware.bosAlanUrun,
+  middleware.bosAlanUrunId,
   async (req, res) => {
     const { UrunID } = req.body;
 
     try {
       const spUrunSilRes = await spFunction.spUrunSil(UrunID);
-      res.send({ responseCode: 100, message: "Ürün Silindi" });
+      if (
+        spUrunSilRes &&
+        spUrunSilRes.recordset &&
+        spUrunSilRes.recordset.length > 0
+      ) {
+        if (spUrunSilRes.recordset[0].ResponseCode === 100) {
+          res.send({ responseCode: 100, message: "Ürün Silindi" });
+        } else {
+          res.send({ responseCode: -300, message: "Hata" });
+        }
+      }
     } catch (error) {
       res.send(error.message);
     }
@@ -170,81 +227,79 @@ const siparisList = app.get("/siparisList", async (req, res) => {
   }
 });
 
-const siparisEkle = app.post("/siparisEkle", middleware.bosAlanSiparis, async (req, res) => {
-  const {
-    SiparisTarihi,
-    TeslimTarihi,
-    SiparisDurumID,
-    MusteriNotu,
-    FirmaNotu,
-    IlID,
-    AcikAdres,
-    Telefon,
-    Ad,
-    Soyad,
-    ToplamFiyat,
-  } = req.body;
-  try {
-    const spSiparisEkleRes = await spFunction.spSiparisEkle(
-      SiparisTarihi,
-      TeslimTarihi,
-      SiparisDurumID,
-      MusteriNotu,
-      FirmaNotu,
-      IlID,
-      AcikAdres,
-      Telefon,
-      Ad,
-      Soyad,
-      ToplamFiyat
-    );
-    res.send({ responseCode: 100, message: "Siparis Eklendi" });
-  } catch (error) {
-    res.send(error.message);
-  }
-});
-
-const siparisGuncelle = app.put(
-  "/siparisGuncelle",
+const siparisEkle = app.post(
+  "/siparisEkle",
   middleware.bosAlanSiparis,
   async (req, res) => {
-    const {
-      SiparisId,
-      SiparisTarihi,
-      TeslimTarihi,
-      SiparisDurumID,
-      MusteriNotu,
-      FirmaNotu,
-      IlID,
-      AcikAdres,
-      Telefon,
-      Ad,
-      Soyad,
-      ToplamFiyat,
-    } = req.body;
-
+    const { ID, SiparisID, UrunID, UrunFiyati, SiparisAdedi } = req.body;
     try {
-      const spUrunGuncelleRes = await spFunction.spSiparisGuncelle(
-        SiparisId,
-        SiparisTarihi,
-        TeslimTarihi,
-        SiparisDurumID,
-        MusteriNotu,
-        FirmaNotu,
-        IlID,
-        AcikAdres,
-        Telefon,
-        Ad,
-        Soyad,
-        ToplamFiyat,
+      const spSiparisEkleRes = await spFunction.spSiparisEkle(
+        SiparisID,
+        UrunID,
+        UrunFiyati,
+        SiparisAdedi
       );
-
-      res.send({ responseCode: 100, message: "Siparis Güncellendi" });
+      if (
+        spSiparisEkleRes &&
+        spSiparisEkleRes.recordset &&
+        spSiparisEkleRes.recordset.length > 0
+      ) {
+        if (spSiparisEkleRes.recordset[0].ResponseCode === 100) {
+          res.send({ responseCode: 100, message: "Siparis Eklendi" });
+        } else {
+          res.send({ responseCode: -300, message: "Hata" });
+        }
+      }
+      
     } catch (error) {
       res.send(error.message);
     }
   }
 );
+
+const siparisGuncelle = app.put(
+  "/siparisGuncelle",
+  middleware.bosAlanSiparis,
+  async (req, res) => {
+    const { ID, SiparisID, UrunID, UrunFiyati, SiparisAdedi } = req.body;
+
+    try {
+      const spUrunGuncelleRes = await spFunction.spSiparisGuncelle(
+        ID,
+        SiparisID,
+        UrunID,
+        UrunFiyati,
+        SiparisAdedi
+      );
+      if (
+        spUrunGuncelleRes &&
+        spUrunGuncelleRes.recordset &&
+        spUrunGuncelleRes.recordset.length > 0
+      ) {
+        if (spUrunGuncelleRes.recordset[0].ResponseCode === 100) {
+          res.send({ responseCode: 100, message: "Siparis Güncellendi" });
+        } else {
+          res.send({ responseCode: -300, message: "Hata" });
+        }
+      }
+      
+    } catch (error) {
+      res.send(error.message);
+    }
+  }
+);
+//#endregion
+
+//#region URUN DETAY
+const urunDetayList = app.get("/urunDetayList", async (req, res) => {
+  const { Id } = req.body;
+  try {
+    const spUrunDetayListRes = await spFunction.spUrunDetayList(Id);
+    res.send(spUrunDetayListRes.recordset);
+  } catch (error) {
+    res.send(error.message);
+  }
+});
 //#endregion
 
 module.exports = app;

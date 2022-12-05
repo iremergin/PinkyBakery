@@ -92,63 +92,44 @@ const spsiparisList = async () => {
 };
 
 const spSiparisEkle = async (
-  siparisTarihi,
-  teslimTarihi,
-  siparisDurumID,
-  musteriNotu,
-  firmaNotu,
-  ilID,
-  acikAdres,
-  telefon,
-  ad,
-  soyad,
-  toplamFiyat
+  siparisId,
+  urunId,
+  urunFiyati,
+  siparisAdedi
 ) => {
   return await sqlConRes
     .request()
-    .input("SiparisTarihi", sql.DateTime, siparisTarihi)
-    .input("TeslimTarihi", sql.DateTime, teslimTarihi)
-    .input("SiparisDurumID", sql.Int, siparisDurumID)
-    .input("MusteriNotu", sql.VarChar(300), musteriNotu)
-    .input("FirmaNotu", sql.VarChar(300), firmaNotu)
-    .input("IlID", sql.Int, ilID)
-    .input("AcikAdres", sql.VarChar(300), acikAdres)
-    .input("Telefon", sql.VarChar(20), telefon)
-    .input("Ad", sql.VarChar(100), ad)
-    .input("Soyad", sql.VarChar(100), soyad)
-    .input("ToplamFiyat", sql.Money, toplamFiyat)
+    .input("SiparisID", sql.Int, siparisId)
+    .input("UrunID", sql.Int, urunId)
+    .input("UrunFiyati", sql.Money, urunFiyati)
+    .input("SiparisAdedi", sql.Int, siparisAdedi)
     .execute("usp_SiparisEkle");
 };
 
 const spSiparisGuncelle = async (
   id,
-  siparisTarihi,
-  teslimTarihi,
-  siparisDurumID,
-  musteriNotu,
-  firmaNotu,
-  ilID,
-  acikAdres,
-  telefon,
-  ad,
-  soyad,
-  toplamFiyat
+  siparisId,
+  urunId,
+  urunFiyati,
+  siparisAdedi
 ) => {
   return await sqlConRes
     .request()
     .input("ID", sql.Int, id)
-    .input("SiparisTarihi", sql.DateTime, siparisTarihi)
-    .input("TeslimTarihi", sql.DateTime, teslimTarihi)
-    .input("SiparisDurumID", sql.Int, siparisDurumID)
-    .input("MusteriNotu", sql.VarChar(300), musteriNotu)
-    .input("FirmaNotu", sql.VarChar(300), firmaNotu)
-    .input("IlID", sql.Int, ilID)
-    .input("AcikAdres", sql.VarChar(300), acikAdres)
-    .input("Telefon", sql.VarChar(20), telefon)
-    .input("Ad", sql.VarChar(100), ad)
-    .input("Soyad", sql.VarChar(100), soyad)
-    .input("ToplamFiyat", sql.Money, toplamFiyat)
+    .input("SiparisID", sql.Int, siparisId)
+    .input("UrunID", sql.Int, urunId)
+    .input("UrunFiyati", sql.Money, urunFiyati)
+    .input("SiparisAdedi", sql.Int, siparisAdedi)
     .execute("usp_SiparisGuncelle");
+};
+//#endregion
+
+//#region URUNDETAY
+const spUrunDetayList = async (id) => {
+  return await sqlConRes
+    .request()
+    .input("ID", sql.Int, id)
+    .execute("usp_UrunDetayList");
 };
 //#endregion
 
@@ -163,5 +144,6 @@ module.exports = {
   spUrunSil,
   spsiparisList,
   spSiparisEkle,
-  spSiparisGuncelle
+  spSiparisGuncelle,
+  spUrunDetayList,
 };
