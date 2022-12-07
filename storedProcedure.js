@@ -92,34 +92,46 @@ const spsiparisList = async () => {
 };
 
 const spSiparisEkle = async (
-  siparisId,
-  urunId,
-  urunFiyati,
-  siparisAdedi
+  musteriNotu,
+  ilID,
+  acikAdres,
+  telefon,
+  ad,
+  soyad,
+  toplamFiyat
 ) => {
   return await sqlConRes
     .request()
-    .input("SiparisID", sql.Int, siparisId)
-    .input("UrunID", sql.Int, urunId)
-    .input("UrunFiyati", sql.Money, urunFiyati)
-    .input("SiparisAdedi", sql.Int, siparisAdedi)
+    .input("MusteriNotu", sql.VarChar(300), musteriNotu)
+    .input("IlID", sql.Int, ilID)
+    .input("AcikAdres", sql.VarChar(300), acikAdres)
+    .input("Telefon", sql.VarChar(20), telefon)
+    .input("Ad", sql.VarChar(100), ad)
+    .input("Soyad", sql.VarChar(100), soyad)
+    .input("ToplamFiyat", sql.Money, toplamFiyat)
     .execute("usp_SiparisEkle");
 };
 
-const spSiparisGuncelle = async (
-  id,
+const spSiparisUrunEkle = async ({
   siparisId,
   urunId,
   urunFiyati,
-  siparisAdedi
-) => {
+  siparisAdedi,
+}) => {
+  return await sqlConRes
+    .request()
+    .input("siparisId", sql.Int, siparisId)
+    .input("urunId", sql.Int, urunId)
+    .input("urunFiyati", sql.Money, urunFiyati)
+    .input("siparisAdedi", sql.Int, siparisAdedi)
+    .execute("usp_SiparisUrunEkle");
+};
+
+const spSiparisGuncelle = async (id, siparisDurumId) => {
   return await sqlConRes
     .request()
     .input("ID", sql.Int, id)
-    .input("SiparisID", sql.Int, siparisId)
-    .input("UrunID", sql.Int, urunId)
-    .input("UrunFiyati", sql.Money, urunFiyati)
-    .input("SiparisAdedi", sql.Int, siparisAdedi)
+    .input("SiparisDurumID", sql.Int, siparisDurumId)
     .execute("usp_SiparisGuncelle");
 };
 //#endregion
@@ -130,6 +142,12 @@ const spUrunDetayList = async (id) => {
     .request()
     .input("ID", sql.Int, id)
     .execute("usp_UrunDetayList");
+};
+//#endregion
+
+//#region Iller
+const spIlList = async () => {
+  return await sqlConRes.request().execute("usp_IlList");
 };
 //#endregion
 
@@ -146,4 +164,6 @@ module.exports = {
   spSiparisEkle,
   spSiparisGuncelle,
   spUrunDetayList,
+  spSiparisUrunEkle,
+  spIlList
 };
