@@ -261,6 +261,8 @@ const siparisEkle = app.post(
       ) {
         if (spSiparisEkleRes.recordset[0].ResponseCode === 100) {
           const siparisId = spSiparisEkleRes.recordset[0].SiparisID;
+          const urunFiyati = spSiparisEkleRes.recordset[0].UrunFiyat;
+
 
           for (let i = 0; i < Urunler.length; i++) {
             const urun = Urunler[i];
@@ -268,11 +270,10 @@ const siparisEkle = app.post(
             const siparUrunDbRes = await spFunction.spSiparisUrunEkle({
               siparisAdedi: urun.SiparisAdet,
               siparisId,
-              urunFiyati: urun.UrunFiyati,
+              urunFiyati,
               urunId: urun.UrunId,
             });
           }
-
 
           res.send({ responseCode: 100, message: "Siparis Eklendi" });
         } else {
