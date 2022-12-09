@@ -148,7 +148,7 @@ const urunEkle = app.post(
 
 const urunGuncelle = app.put(
   "/urunGuncelle",
-  middleware.bosAlanUrun,
+  // middleware.bosAlanUrun,
   async (req, res) => {
     const {
       UrunID,
@@ -318,7 +318,7 @@ const siparisGuncelle = app.put(
 //#endregion
 
 //#region URUN DETAY
-const urunDetayList = app.get("/urunDetayList", async (req, res) => {
+const urunDetayList = app.post("/urunDetayList", async (req, res) => {
   const { Id } = req.body;
   try {
     const spUrunDetayListRes = await spFunction.spUrunDetayList(Id);
