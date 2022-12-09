@@ -108,21 +108,21 @@ const spSiparisEkle = async (
     .input("Telefon", sql.VarChar(20), telefon)
     .input("Ad", sql.VarChar(100), ad)
     .input("Soyad", sql.VarChar(100), soyad)
-    // .input("ToplamFiyat", sql.Money, toplamFiyat)
+    .input("ToplamFiyat", sql.Money, toplamFiyat)
     .execute("usp_SiparisEkle");
 };
 
 const spSiparisUrunEkle = async ({
   siparisId,
   urunId,
-  // urunFiyati,
+  urunFiyati,
   siparisAdedi,
 }) => {
   return await sqlConRes
     .request()
     .input("SiparisID", sql.Int, siparisId)
     .input("UrunID", sql.Int, urunId)
-    // .input("UrunFiyati", sql.Money, urunFiyati)
+    .input("UrunFiyati", sql.Money, urunFiyati)
     .input("SiparisAdedi", sql.Int, siparisAdedi)
     .execute("usp_SiparisUrunEkle");
 };
