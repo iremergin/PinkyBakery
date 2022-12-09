@@ -115,7 +115,6 @@ const spSiparisEkle = async (
 const spSiparisUrunEkle = async ({
   siparisId,
   urunId,
-  urunFiyati,
   siparisAdedi,
 }) => {
   return await sqlConRes

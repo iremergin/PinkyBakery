@@ -270,7 +270,6 @@ const siparisEkle = app.post(
             const siparUrunDbRes = await spFunction.spSiparisUrunEkle({
               siparisAdedi: urun.SiparisAdet,
               siparisId,
-              urunFiyati,
               urunId: urun.UrunId,
             });
           }
