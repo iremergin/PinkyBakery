@@ -120,10 +120,9 @@ const spSiparisUrunEkle = async ({
 }) => {
   return await sqlConRes
     .request()
-    .input("SiparisID", sql.Int, siparisId)
-    .input("UrunID", sql.Int, urunId)
-    .input("UrunFiyati", sql.Money, urunFiyati)
-    .input("SiparisAdedi", sql.Int, siparisAdedi)
+    .input("siparisId", sql.Int, siparisId)
+    .input("urunId", sql.Int, urunId)   
+    .input("siparisAdedi", sql.Int, siparisAdedi)
     .execute("usp_SiparisUrunEkle");
 };
 
