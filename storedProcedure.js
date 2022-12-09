@@ -108,7 +108,7 @@ const spSiparisEkle = async (
     .input("Telefon", sql.VarChar(20), telefon)
     .input("Ad", sql.VarChar(100), ad)
     .input("Soyad", sql.VarChar(100), soyad)
-    .input("ToplamFiyat", sql.Money, toplamFiyat)
+    // .input("ToplamFiyat", sql.Money, toplamFiyat)
     .execute("usp_SiparisEkle");
 };
 

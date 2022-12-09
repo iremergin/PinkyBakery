@@ -238,7 +238,7 @@ const siparisEkle = app.post(
       Telefon,
       Ad,
       Soyad,
-      ToplamFiyat,
+      // ToplamFiyat,
       Urunler,
     } = req.body;
 
@@ -250,7 +250,7 @@ const siparisEkle = app.post(
         Telefon,
         Ad,
         Soyad,
-        ToplamFiyat,
+        // ToplamFiyat,
         Urunler
       );
 
@@ -262,6 +262,7 @@ const siparisEkle = app.post(
         if (spSiparisEkleRes.recordset[0].ResponseCode === 100) {
           const siparisId = spSiparisEkleRes.recordset[0].SiparisID;
           const urunFiyati = spSiparisEkleRes.recordset[0].UrunFiyat;
+          const toplamFiyat = spSiparisEkleRes.recordset[0].ToplamFiyat;
 
 
           for (let i = 0; i < Urunler.length; i++) {
@@ -322,7 +323,7 @@ const urunDetayList = app.post("/urunDetayList", async (req, res) => {
   const { Id } = req.body;
   try {
     const spUrunDetayListRes = await spFunction.spUrunDetayList(Id);
-    res.send(spUrunDetayListRes.recordset);
+    res.send(spUrunDetayListRes.recordset[0]);
   } catch (error) {
     res.send(error.message);
   }
