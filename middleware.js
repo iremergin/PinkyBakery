@@ -62,7 +62,6 @@ const bosAlanSiparis = (req, res, next) => {
   return res.send({ message: "Boş değer olamaz" });
 };
 
-
 module.exports = {
   bosAlanKategoriID,
   bosAlanKategoriAd,

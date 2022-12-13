@@ -263,7 +263,6 @@ const siparisEkle = app.post(
           const siparisId = spSiparisEkleRes.recordset[0].SiparisID;
           const urunFiyati = spSiparisEkleRes.recordset[0].UrunFiyat;
 
-
           for (let i = 0; i < Urunler.length; i++) {
             const urun = Urunler[i];
 
@@ -298,6 +297,7 @@ const siparisGuncelle = app.put(
         ID,
         SiparisDurumID
       );
+
       if (
         spSiparisGuncelleRes &&
         spSiparisGuncelleRes.recordset &&
@@ -326,7 +326,7 @@ const urunDetayList = app.post("/urunDetayList", async (req, res) => {
     res.send(error.message);
   }
 });
-//#endregion 
+//#endregion
 
 //#region İLLER
 const ilList = app.get("/ilList", async (req, res) => {
@@ -338,5 +338,50 @@ const ilList = app.get("/ilList", async (req, res) => {
   }
 });
 //endregion
+
+//#region LOGIN
+const login = app.post("/login", async (req, res) => {
+  const { Email, Sifre } = req.body;
+  try {
+    const spLoginRes = await spFunction.spLogin(Email, Sifre);
+    debugger;
+    if (spLoginRes && spLoginRes.recordset && spLoginRes.recordset.length > 0) {
+      if (spLoginRes.recordset[0].ResponseCode === 100) {
+        res.send({ responseCode: 100, message: "Login Olundu." });
+      } else {
+        res.send({ responseCode: -300, message: "Hata" });
+      }
+    }
+  } catch (error) {
+    res.send(error.message);
+  }
+});
+
+//endregion
+
+//#region SİPARİS DETAY
+const siparisDetayList = app.post("/siparisDetayList", async (req, res) => {
+  debugger;
+  const { Id } = req.body;
+  try {
+    const spSiparisDetayListRes = await spFunction.spSiparisDetayList(Id);
+    const siparisDetayObj = {};
+    const urunler = [];
+    for (let i = 0; i < spSiparisDetayListRes.recordset.length; i++) {
+      siparisDetayObj.MusteriNotu = spSiparisDetayListRes.recordset[0].MusteriNotu;
+      siparisDetayObj.SiparisTarihi= spSiparisDetayListRes.recordset[0].SiparisTarihi;
+      siparisDetayObj.SiparisDurumu= spSiparisDetayListRes.recordset[0].SiparisDurumu;
+      siparisDetayObj.TeslimTarihi= spSiparisDetayListRes.recordset[0].TeslimTarihi;
+      siparisDetayObj.ToplamFiyat= spSiparisDetayListRes.recordset[0].ToplamFiyat;
+      siparisDetayObj.FirmaNotu= spSiparisDetayListRes.recordset[0].FirmaNotu;
+      urunler.push(spSiparisDetayListRes.recordset[i].UrunAdi);
+      siparisDetayObj.urunler = urunler;
+    }
+    res.send(siparisDetayObj);
+  } catch (error) {
+    res.send(error.message);
+  }
+});
+//#endregion
 
 module.exports = app;

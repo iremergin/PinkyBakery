@@ -112,15 +112,11 @@ const spSiparisEkle = async (
     .execute("usp_SiparisEkle");
 };
 
-const spSiparisUrunEkle = async ({
-  siparisId,
-  urunId,
-  siparisAdedi,
-}) => {
+const spSiparisUrunEkle = async ({ siparisId, urunId, siparisAdedi }) => {
   return await sqlConRes
     .request()
     .input("siparisId", sql.Int, siparisId)
-    .input("urunId", sql.Int, urunId)   
+    .input("urunId", sql.Int, urunId)
     .input("siparisAdedi", sql.Int, siparisAdedi)
     .execute("usp_SiparisUrunEkle");
 };
@@ -143,11 +139,33 @@ const spUrunDetayList = async (id) => {
 };
 //#endregion
 
-//#region Iller
+//#region ILLER
 const spIlList = async () => {
   return await sqlConRes.request().execute("usp_IlList");
 };
 //#endregion
+
+//#region LOGIN
+
+const spLogin = async (email, sifre) => {
+  return await sqlConRes
+    .request()
+    .input("Email", sql.VarChar(300), email)
+    .input("Sifre", sql.VarChar(30), sifre)
+    .execute("usp_Login");
+};
+
+//#endregion
+
+//#region SİPARİSDETAY
+const spSiparisDetayList = async (id) => {
+  return await sqlConRes
+    .request()
+    .input("ID", sql.Int, id)
+    .execute("usp_SiparisDetayList");
+};
+//#endregion
+
 
 module.exports = {
   spUrunList,
@@ -163,5 +181,7 @@ module.exports = {
   spSiparisGuncelle,
   spUrunDetayList,
   spSiparisUrunEkle,
-  spIlList
+  spIlList,
+  spLogin,
+  spSiparisDetayList
 };
