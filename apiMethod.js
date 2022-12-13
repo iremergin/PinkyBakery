@@ -361,20 +361,29 @@ const login = app.post("/login", async (req, res) => {
 
 //#region SİPARİS DETAY
 const siparisDetayList = app.post("/siparisDetayList", async (req, res) => {
-  debugger;
   const { Id } = req.body;
   try {
     const spSiparisDetayListRes = await spFunction.spSiparisDetayList(Id);
     const siparisDetayObj = {};
     const urunler = [];
     for (let i = 0; i < spSiparisDetayListRes.recordset.length; i++) {
-      siparisDetayObj.MusteriNotu = spSiparisDetayListRes.recordset[0].MusteriNotu;
-      siparisDetayObj.SiparisTarihi= spSiparisDetayListRes.recordset[0].SiparisTarihi;
-      siparisDetayObj.SiparisDurumu= spSiparisDetayListRes.recordset[0].SiparisDurumu;
-      siparisDetayObj.TeslimTarihi= spSiparisDetayListRes.recordset[0].TeslimTarihi;
-      siparisDetayObj.ToplamFiyat= spSiparisDetayListRes.recordset[0].ToplamFiyat;
-      siparisDetayObj.FirmaNotu= spSiparisDetayListRes.recordset[0].FirmaNotu;
-      urunler.push(spSiparisDetayListRes.recordset[i].UrunAdi);
+      siparisDetayObj.MusteriNotu =
+        spSiparisDetayListRes.recordset[0].MusteriNotu;
+      siparisDetayObj.SiparisTarihi =
+        spSiparisDetayListRes.recordset[0].SiparisTarihi;
+      siparisDetayObj.SiparisDurumu =
+        spSiparisDetayListRes.recordset[0].SiparisDurumu;
+      siparisDetayObj.TeslimTarihi =
+        spSiparisDetayListRes.recordset[0].TeslimTarihi;
+      siparisDetayObj.ToplamFiyat =
+        spSiparisDetayListRes.recordset[0].ToplamFiyat;
+      siparisDetayObj.FirmaNotu = spSiparisDetayListRes.recordset[0].FirmaNotu;
+      urunler.push({
+        UrunAdi: spSiparisDetayListRes.recordset[i].UrunAdi,
+        UrunFiyati: spSiparisDetayListRes.recordset[i].UrunFiyati,
+        SiparisAdedi: spSiparisDetayListRes.recordset[i].SiparisAdedi,
+      });
+
       siparisDetayObj.urunler = urunler;
     }
     res.send(siparisDetayObj);

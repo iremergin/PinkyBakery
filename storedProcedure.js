@@ -1,4 +1,5 @@
 const sql = require("mssql");
+
 //#region KATEGORİ
 const spKategoriList = async () => {
   return await sqlConRes.request().execute("usp_KategoriList");
@@ -166,7 +167,6 @@ const spSiparisDetayList = async (id) => {
 };
 //#endregion
 
-
 module.exports = {
   spUrunList,
   spKategoriList,
@@ -183,5 +183,5 @@ module.exports = {
   spSiparisUrunEkle,
   spIlList,
   spLogin,
-  spSiparisDetayList
+  spSiparisDetayList,
 };
