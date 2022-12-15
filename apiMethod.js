@@ -3,6 +3,8 @@ const app = express();
 const spFunction = require("./storedProcedure");
 const middleware = require("./middleware");
 const sql = require("mssql");
+const jwt = require("jsonwebtoken");
+const token = require("./verify-token");
 
 //#region KATEGORİ
 const kategoriList = app.get("/kategoriList", async (req, res) => {
@@ -340,20 +342,25 @@ const ilList = app.get("/ilList", async (req, res) => {
 //endregion
 
 //#region LOGIN
-const login = app.post("/login", async (req, res) => {
-  const { Email, Sifre } = req.body;
+const login = app.post("/login", async (request, response) => {
+  const { email, sifre } = request.body;
   try {
-    const spLoginRes = await spFunction.spLogin(Email, Sifre);
-    debugger;
-    if (spLoginRes && spLoginRes.recordset && spLoginRes.recordset.length > 0) {
-      if (spLoginRes.recordset[0].ResponseCode === 100) {
-        res.send({ responseCode: 100, message: "Login Olundu." });
-      } else {
-        res.send({ responseCode: -300, message: "Hata" });
-      }
-    }
+    const spLoginRes = await spFunction.spLogin(email, sifre);
+    const kullaniciID = spLoginRes.recordset[0].KullaniciID;
+    const payLoad = {
+      email,
+      sifre,
+      kullaniciID,
+    };
+    const token = jwt.sign(payLoad, request.app.get("api_secret_key"), {
+      expiresIn: 120,
+    });
+    return response.json({
+      status: true,
+      token,
+    });
   } catch (error) {
-    res.send(error.message);
+    response.send(error.message);
   }
 });
 
@@ -364,27 +371,25 @@ const siparisDetayList = app.post("/siparisDetayList", async (req, res) => {
   const { Id } = req.body;
   try {
     const spSiparisDetayListRes = await spFunction.spSiparisDetayList(Id);
-    const siparisDetayObj = {};
-    const urunler = [];
-    for (let i = 0; i < spSiparisDetayListRes.recordset.length; i++) {
-      siparisDetayObj.MusteriNotu =
-        spSiparisDetayListRes.recordset[0].MusteriNotu;
-      siparisDetayObj.SiparisTarihi =
-        spSiparisDetayListRes.recordset[0].SiparisTarihi;
-      siparisDetayObj.SiparisDurumu =
-        spSiparisDetayListRes.recordset[0].SiparisDurumu;
-      siparisDetayObj.TeslimTarihi =
-        spSiparisDetayListRes.recordset[0].TeslimTarihi;
-      siparisDetayObj.ToplamFiyat =
-        spSiparisDetayListRes.recordset[0].ToplamFiyat;
-      siparisDetayObj.FirmaNotu = spSiparisDetayListRes.recordset[0].FirmaNotu;
-      urunler.push({
-        UrunAdi: spSiparisDetayListRes.recordset[i].UrunAdi,
-        UrunFiyati: spSiparisDetayListRes.recordset[i].UrunFiyati,
-        SiparisAdedi: spSiparisDetayListRes.recordset[i].SiparisAdedi,
-      });
 
-      siparisDetayObj.urunler = urunler;
+    const siparisDetayObj = {
+      ...spSiparisDetayListRes.recordset[0],
+      urunler: []
+    }
+
+    for (let i = 0; i < spSiparisDetayListRes.recordsets.length; i++) {
+      const recordset = spSiparisDetayListRes.recordsets[i]
+      if (i === 1) {
+        // for (let k = 0; k < recordset.length; k++) {
+        //   const recordset2 = recordset[k];
+          
+        //   siparisDetayObj.items.push(recordset2)
+        // }
+
+        siparisDetayObj.urunler.push(...recordset)
+      }
+
+      // siparisDetayObj.urunler = urunler;
     }
     res.send(siparisDetayObj);
   } catch (error) {
