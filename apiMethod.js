@@ -366,7 +366,7 @@ const login = app.post("/login", async (request, response) => {
 
 //endregion
 
-//#region SİPARİS DETAY
+//#region SİPARİSDETAY
 const siparisDetayList = app.post("/siparisDetayList", async (req, res) => {
   const { Id } = req.body;
   try {
@@ -396,6 +396,32 @@ const siparisDetayList = app.post("/siparisDetayList", async (req, res) => {
     res.send(error.message);
   }
 });
+//#endregion
+
+//#region URUNDURUMLIST
+
+const urunDurumList = app.get("/urunDurumList", async (req, res) => {
+  try {
+    const spurunDurumListRes = await spFunction.spUrunDurumList();
+    res.send(spurunDurumListRes.recordset);
+  } catch (error) {
+    res.send(error.message);
+  }
+});
+
+//#endregion
+
+//#region SIPARISDURUMLIST
+
+const siparisDurumList = app.get("/siparisDurumList", async (req, res) => {
+  try {
+    const spSiparisDurumListRes = await spFunction.spSiparisDurumList();
+    res.send(spSiparisDurumListRes.recordset);
+  } catch (error) {
+    res.send(error.message);
+  }
+});
+
 //#endregion
 
 module.exports = app;

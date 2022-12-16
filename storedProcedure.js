@@ -167,6 +167,21 @@ const spSiparisDetayList = async (id) => {
 };
 //#endregion
 
+
+//#region URUNDURUMLIST
+
+const spUrunDurumList = async () => {
+  return await sqlConRes.request().execute("usp_UrunDurumList");
+};
+//#endregion
+
+//#region SIPARIDURUMLIST
+
+const spSiparisDurumList = async () => {
+  return await sqlConRes.request().execute("usp_SiparisDurumList");
+};
+//#endregion
+
 module.exports = {
   spUrunList,
   spKategoriList,
@@ -184,4 +199,6 @@ module.exports = {
   spIlList,
   spLogin,
   spSiparisDetayList,
+  spUrunDurumList,
+  spSiparisDurumList
 };
