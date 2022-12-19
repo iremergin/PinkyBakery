@@ -4,10 +4,11 @@ const spFunction = require("./storedProcedure");
 const middleware = require("./middleware");
 const sql = require("mssql");
 const jwt = require("jsonwebtoken");
+const secretKey = require("./config");
 const token = require("./verify-token");
 
 //#region KATEGORİ
-const kategoriList = app.get("/kategoriList", async (req, res) => {
+const kategoriList = app.get("/kategoriList", token.tokenGirisKontrol, async (req, res) => {
   try {
     const spKategoriListRes = await spFunction.spKategoriList();
     res.send(spKategoriListRes.recordset);
@@ -19,6 +20,7 @@ const kategoriList = app.get("/kategoriList", async (req, res) => {
 const kategoriEkle = app.post(
   "/kategoriEkle",
   middleware.bosAlanKategoriAd,
+  token.tokenGirisKontrol,
   async (req, res) => {
     const { KategoriAdi } = req.body;
     try {
@@ -45,6 +47,7 @@ const kategoriGuncelle = app.put(
   "/kategoriGuncelle",
   middleware.bosAlanKategoriID,
   middleware.bosAlanKategoriAd,
+  token.tokenGirisKontrol,
   async (req, res) => {
     const { KategoriId, KategoriAdi } = req.body;
 
@@ -74,6 +77,7 @@ const kategoriGuncelle = app.put(
 const kategoriSil = app.delete(
   "/kategoriSil",
   middleware.bosAlanKategoriID,
+  token.tokenGirisKontrol,
   async (req, res) => {
     const { KategoriId } = req.body;
 
@@ -99,7 +103,7 @@ const kategoriSil = app.delete(
 //#endregion
 
 //#region ÜRÜN
-const urunList = app.get("/urunList", async (req, res) => {
+const urunList = app.get("/urunList", token.tokenGirisKontrol, async (req, res) => {
   try {
     const spUrunListRes = await spFunction.spUrunList();
     res.send(spUrunListRes.recordset);
@@ -111,6 +115,7 @@ const urunList = app.get("/urunList", async (req, res) => {
 const urunEkle = app.post(
   "/urunEkle",
   // middleware.bosAlanUrun,
+  token.tokenGirisKontrol,
   async (req, res) => {
     const {
       UrunAdi,
@@ -151,6 +156,7 @@ const urunEkle = app.post(
 const urunGuncelle = app.put(
   "/urunGuncelle",
   // middleware.bosAlanUrun,
+  token.tokenGirisKontrol,
   async (req, res) => {
     const {
       UrunID,
@@ -194,6 +200,7 @@ const urunGuncelle = app.put(
 const urunSil = app.delete(
   "/urunSil",
   middleware.bosAlanUrunId,
+  token.tokenGirisKontrol,
   async (req, res) => {
     const { UrunID } = req.body;
 
@@ -220,7 +227,7 @@ const urunSil = app.delete(
 
 //#region SİPARİS
 
-const siparisList = app.get("/siparisList", async (req, res) => {
+const siparisList = app.get("/siparisList", token.tokenGirisKontrol, async (req, res) => {
   try {
     const spSiparisListRes = await spFunction.spsiparisList();
     res.send(spSiparisListRes.recordset);
@@ -232,6 +239,7 @@ const siparisList = app.get("/siparisList", async (req, res) => {
 const siparisEkle = app.post(
   "/siparisEkle",
   // middleware.bosAlanSiparis,
+  token.tokenGirisKontrol,
   async (req, res) => {
     const {
       MusteriNotu,
@@ -291,6 +299,7 @@ const siparisEkle = app.post(
 const siparisGuncelle = app.put(
   "/siparisGuncelle",
   middleware.bosAlanSiparis,
+  token.tokenGirisKontrol,
   async (req, res) => {
     const { ID, SiparisDurumID } = req.body;
 
@@ -319,7 +328,7 @@ const siparisGuncelle = app.put(
 //#endregion
 
 //#region URUN DETAY
-const urunDetayList = app.post("/urunDetayList", async (req, res) => {
+const urunDetayList = app.post("/urunDetayList", token.tokenGirisKontrol, async (req, res) => {
   const { Id } = req.body;
   try {
     const spUrunDetayListRes = await spFunction.spUrunDetayList(Id);
@@ -331,7 +340,7 @@ const urunDetayList = app.post("/urunDetayList", async (req, res) => {
 //#endregion
 
 //#region İLLER
-const ilList = app.get("/ilList", async (req, res) => {
+const ilList = app.get("/ilList", token.tokenGirisKontrol, async (req, res) => {
   try {
     const spIlListRes = await spFunction.spIlList();
     res.send(spIlListRes.recordset);
@@ -342,23 +351,31 @@ const ilList = app.get("/ilList", async (req, res) => {
 //endregion
 
 //#region LOGIN
-const login = app.post("/login", async (request, response) => {
+const login = app.post("/login",  async (request, response) => {
   const { email, sifre } = request.body;
   try {
     const spLoginRes = await spFunction.spLogin(email, sifre);
-    const kullaniciID = spLoginRes.recordset[0].KullaniciID;
-    const payLoad = {
-      email,
-      sifre,
-      kullaniciID,
-    };
-    const token = jwt.sign(payLoad, request.app.get("api_secret_key"), {
-      expiresIn: 120,
-    });
-    return response.json({
-      status: true,
-      token,
-    });
+
+    if (spLoginRes && spLoginRes.recordset && spLoginRes.recordset.length > 0) {
+      if (spLoginRes.recordset[0].ResponseCode === 100) {
+        const kullaniciID = spLoginRes.recordset[0].KullaniciID;
+        const payLoad = {
+          email,
+          sifre,
+          kullaniciID,
+        };
+        const token = jwt.sign(payLoad, request.app.get("api_secret_key"), {
+          expiresIn: "1h",
+        });
+        response.json({
+          responseCode: 100,
+          message: "Basarili",
+          token,
+        });
+      } else {
+        response.send({ responseCode: -300, message: "Kullanici Bulunamadi!" });
+      }
+    }
   } catch (error) {
     response.send(error.message);
   }
@@ -366,27 +383,51 @@ const login = app.post("/login", async (request, response) => {
 
 //endregion
 
+//#region TOKEN KONTROL
+// const tokenKontrol = app.get("/token", async (request, response) => {
+//   const { token } = request.headers;
+//   try {
+//     const verification = jwt.verify(token, secretKey.api_secret_key);
+//     if (verification ){
+//       response.send({
+//         responseCode: 100,
+//         message: "token ile giris basarili",
+//         // decoded: verification._doc,
+//       });
+//     } else {
+//       response.send({
+//         responseCode: -300,
+//         message: "token ile giris basarisiz",
+//       });
+//     }
+//   } catch (error) {
+//     response.send(error.message);
+//   }
+// });
+
+//endregion
+
 //#region SİPARİSDETAY
-const siparisDetayList = app.post("/siparisDetayList", async (req, res) => {
+const siparisDetayList = app.post("/siparisDetayList", token.tokenGirisKontrol, async (req, res) => {
   const { Id } = req.body;
   try {
     const spSiparisDetayListRes = await spFunction.spSiparisDetayList(Id);
 
     const siparisDetayObj = {
       ...spSiparisDetayListRes.recordset[0],
-      urunler: []
-    }
+      urunler: [],
+    };
 
     for (let i = 0; i < spSiparisDetayListRes.recordsets.length; i++) {
-      const recordset = spSiparisDetayListRes.recordsets[i]
+      const recordset = spSiparisDetayListRes.recordsets[i];
       if (i === 1) {
         // for (let k = 0; k < recordset.length; k++) {
         //   const recordset2 = recordset[k];
-          
+
         //   siparisDetayObj.items.push(recordset2)
         // }
 
-        siparisDetayObj.urunler.push(...recordset)
+        siparisDetayObj.urunler.push(...recordset);
       }
 
       // siparisDetayObj.urunler = urunler;
@@ -400,7 +441,7 @@ const siparisDetayList = app.post("/siparisDetayList", async (req, res) => {
 
 //#region URUNDURUMLIST
 
-const urunDurumList = app.get("/urunDurumList", async (req, res) => {
+const urunDurumList = app.get("/urunDurumList", token.tokenGirisKontrol, async (req, res) => {
   try {
     const spurunDurumListRes = await spFunction.spUrunDurumList();
     res.send(spurunDurumListRes.recordset);
@@ -413,7 +454,7 @@ const urunDurumList = app.get("/urunDurumList", async (req, res) => {
 
 //#region SIPARISDURUMLIST
 
-const siparisDurumList = app.get("/siparisDurumList", async (req, res) => {
+const siparisDurumList = app.get("/siparisDurumList", token.tokenGirisKontrol, async (req, res) => {
   try {
     const spSiparisDurumListRes = await spFunction.spSiparisDurumList();
     res.send(spSiparisDurumListRes.recordset);

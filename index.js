@@ -9,7 +9,7 @@ app.use(cors());
 app.set("api_secret_key", require("./config").api_secret_key);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use("/employee", require("./verify-token"));
+// app.use("/employee", require("./verify-token"));
 // app.use("/token", require("./tokenRouter"));
 app.use("/employee", require("./employeeRouter"));
 
