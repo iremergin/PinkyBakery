@@ -271,7 +271,7 @@ const siparisEkle = app.post(
       ) {
         if (spSiparisEkleRes.recordset[0].ResponseCode === 100) {
           const siparisId = spSiparisEkleRes.recordset[0].SiparisID;
-          const urunFiyati = spSiparisEkleRes.recordset[0].UrunFiyat;
+          
 
           for (let i = 0; i < Urunler.length; i++) {
             const urun = Urunler[i];
