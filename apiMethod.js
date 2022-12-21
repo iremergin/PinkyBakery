@@ -8,14 +8,18 @@ const secretKey = require("./config");
 const token = require("./verify-token");
 
 //#region KATEGORİ
-const kategoriList = app.get("/kategoriList", token.tokenGirisKontrol, async (req, res) => {
-  try {
-    const spKategoriListRes = await spFunction.spKategoriList();
-    res.send(spKategoriListRes.recordset);
-  } catch (error) {
-    res.send(error.message);
+const kategoriList = app.get(
+  "/kategoriList",
+  token.tokenGirisKontrol,
+  async (req, res) => {
+    try {
+      const spKategoriListRes = await spFunction.spKategoriList();
+      res.send(spKategoriListRes.recordset);
+    } catch (error) {
+      res.send(error.message);
+    }
   }
-});
+);
 
 const kategoriEkle = app.post(
   "/kategoriEkle",
@@ -103,14 +107,18 @@ const kategoriSil = app.delete(
 //#endregion
 
 //#region ÜRÜN
-const urunList = app.get("/urunList", token.tokenGirisKontrol, async (req, res) => {
-  try {
-    const spUrunListRes = await spFunction.spUrunList();
-    res.send(spUrunListRes.recordset);
-  } catch (error) {
-    res.send(error.message);
+const urunList = app.get(
+  "/urunList",
+  token.tokenGirisKontrol,
+  async (req, res) => {
+    try {
+      const spUrunListRes = await spFunction.spUrunList();
+      res.send(spUrunListRes.recordset);
+    } catch (error) {
+      res.send(error.message);
+    }
   }
-});
+);
 
 const urunEkle = app.post(
   "/urunEkle",
@@ -227,14 +235,18 @@ const urunSil = app.delete(
 
 //#region SİPARİS
 
-const siparisList = app.get("/siparisList", token.tokenGirisKontrol, async (req, res) => {
-  try {
-    const spSiparisListRes = await spFunction.spsiparisList();
-    res.send(spSiparisListRes.recordset);
-  } catch (error) {
-    res.send(error.message);
+const siparisList = app.get(
+  "/siparisList",
+  token.tokenGirisKontrol,
+  async (req, res) => {
+    try {
+      const spSiparisListRes = await spFunction.spsiparisList();
+      res.send(spSiparisListRes.recordset);
+    } catch (error) {
+      res.send(error.message);
+    }
   }
-});
+);
 
 const siparisEkle = app.post(
   "/siparisEkle",
@@ -271,7 +283,6 @@ const siparisEkle = app.post(
       ) {
         if (spSiparisEkleRes.recordset[0].ResponseCode === 100) {
           const siparisId = spSiparisEkleRes.recordset[0].SiparisID;
-          
 
           for (let i = 0; i < Urunler.length; i++) {
             const urun = Urunler[i];
@@ -328,15 +339,19 @@ const siparisGuncelle = app.put(
 //#endregion
 
 //#region URUN DETAY
-const urunDetayList = app.post("/urunDetayList", token.tokenGirisKontrol, async (req, res) => {
-  const { Id } = req.body;
-  try {
-    const spUrunDetayListRes = await spFunction.spUrunDetayList(Id);
-    res.send(spUrunDetayListRes.recordset[0]);
-  } catch (error) {
-    res.send(error.message);
+const urunDetayList = app.post(
+  "/urunDetayList",
+  token.tokenGirisKontrol,
+  async (req, res) => {
+    const { Id } = req.body;
+    try {
+      const spUrunDetayListRes = await spFunction.spUrunDetayList(Id);
+      res.send(spUrunDetayListRes.recordset[0]);
+    } catch (error) {
+      res.send(error.message);
+    }
   }
-});
+);
 //#endregion
 
 //#region İLLER
@@ -351,7 +366,7 @@ const ilList = app.get("/ilList", token.tokenGirisKontrol, async (req, res) => {
 //endregion
 
 //#region LOGIN
-const login = app.post("/login",  async (request, response) => {
+const login = app.post("/login", async (request, response) => {
   const { email, sifre } = request.body;
   try {
     const spLoginRes = await spFunction.spLogin(email, sifre);
@@ -408,60 +423,72 @@ const login = app.post("/login",  async (request, response) => {
 //endregion
 
 //#region SİPARİSDETAY
-const siparisDetayList = app.post("/siparisDetayList", token.tokenGirisKontrol, async (req, res) => {
-  const { Id } = req.body;
-  try {
-    const spSiparisDetayListRes = await spFunction.spSiparisDetayList(Id);
+const siparisDetayList = app.post(
+  "/siparisDetayList",
+  token.tokenGirisKontrol,
+  async (req, res) => {
+    const { Id } = req.body;
+    try {
+      const spSiparisDetayListRes = await spFunction.spSiparisDetayList(Id);
 
-    const siparisDetayObj = {
-      ...spSiparisDetayListRes.recordset[0],
-      urunler: [],
-    };
+      const siparisDetayObj = {
+        ...spSiparisDetayListRes.recordset[0],
+        urunler: [],
+      };
 
-    for (let i = 0; i < spSiparisDetayListRes.recordsets.length; i++) {
-      const recordset = spSiparisDetayListRes.recordsets[i];
-      if (i === 1) {
-        // for (let k = 0; k < recordset.length; k++) {
-        //   const recordset2 = recordset[k];
+      for (let i = 0; i < spSiparisDetayListRes.recordsets.length; i++) {
+        const recordset = spSiparisDetayListRes.recordsets[i];
+        if (i === 1) {
+          // for (let k = 0; k < recordset.length; k++) {
+          //   const recordset2 = recordset[k];
 
-        //   siparisDetayObj.items.push(recordset2)
-        // }
+          //   siparisDetayObj.items.push(recordset2)
+          // }
 
-        siparisDetayObj.urunler.push(...recordset);
+          siparisDetayObj.urunler.push(...recordset);
+        }
+
+        // siparisDetayObj.urunler = urunler;
       }
-
-      // siparisDetayObj.urunler = urunler;
+      res.send(siparisDetayObj);
+    } catch (error) {
+      res.send(error.message);
     }
-    res.send(siparisDetayObj);
-  } catch (error) {
-    res.send(error.message);
   }
-});
+);
 //#endregion
 
 //#region URUNDURUMLIST
 
-const urunDurumList = app.get("/urunDurumList", token.tokenGirisKontrol, async (req, res) => {
-  try {
-    const spurunDurumListRes = await spFunction.spUrunDurumList();
-    res.send(spurunDurumListRes.recordset);
-  } catch (error) {
-    res.send(error.message);
+const urunDurumList = app.get(
+  "/urunDurumList",
+  token.tokenGirisKontrol,
+  async (req, res) => {
+    try {
+      const spurunDurumListRes = await spFunction.spUrunDurumList();
+      res.send(spurunDurumListRes.recordset);
+    } catch (error) {
+      res.send(error.message);
+    }
   }
-});
+);
 
 //#endregion
 
 //#region SIPARISDURUMLIST
 
-const siparisDurumList = app.get("/siparisDurumList", token.tokenGirisKontrol, async (req, res) => {
-  try {
-    const spSiparisDurumListRes = await spFunction.spSiparisDurumList();
-    res.send(spSiparisDurumListRes.recordset);
-  } catch (error) {
-    res.send(error.message);
+const siparisDurumList = app.get(
+  "/siparisDurumList",
+  token.tokenGirisKontrol,
+  async (req, res) => {
+    try {
+      const spSiparisDurumListRes = await spFunction.spSiparisDurumList();
+      res.send(spSiparisDurumListRes.recordset);
+    } catch (error) {
+      res.send(error.message);
+    }
   }
-});
+);
 
 //#endregion
 

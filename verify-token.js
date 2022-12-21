@@ -37,7 +37,10 @@ const tokenGirisKontrol =  (request, response, next) => {
       });
     }
   } catch (error) {
-    response.send(error.message);
+    response.send({
+      responseCode: -300,
+      message: "token ile giris basarisiz",
+    });
   }
 };
 
