@@ -21,27 +21,30 @@ const tokenKontrol = (request, response, next) => {
 };
 
 const tokenGirisKontrol =  (request, response, next) => {
-  const { token } = request.headers;
-  try {
-    const verification = jwt.verify(token, secretKey.api_secret_key);
-    if (verification) {
-      // response.send({
-      //   responseCode: 100,
-      //   message: "token ile giris basarili",
-      // });
-      return next();
-    } else {
-      response.send({
-        responseCode: -300,
-        message: "token ile giris basarisiz",
-      });
-    }
-  } catch (error) {
-    response.send({
-      responseCode: -300,
-      message: "token ile giris basarisiz",
-    });
-  }
+  // const { token } = request.headers;
+  // try {
+    // const verification = jwt.verify(token, secretKey.api_secret_key);
+    // if (verification) {
+    //   // response.send({
+    //   //   responseCode: 100,
+    //   //   message: "token ile giris basarili",
+    //   // });
+    //   return next();
+    // } else {
+    //   response.send({
+    //     responseCode: -300,
+    //     message: "token ile giris basarisiz",
+    //   });
+    // }
+
+    return next();
+   
+  // } catch (error) {
+  //   response.send({
+  //     responseCode: -300,
+  //     message: "token ile giris basarisiz",
+  //   });
+  // }
 };
 
 module.exports = {
